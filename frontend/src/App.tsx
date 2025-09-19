@@ -6,12 +6,14 @@ import UploadZone from "./components/UploadZone";
 import SummarySection from "./components/SummarySection";
 import QASection from "./components/QASection";
 import ClauseAnalysis from "./components/ClauseAnalysis";
+import GoogleAI from "./components/GoogleAI";
 import { ping, API } from "./api";
 
 export default function App() {
   const [text, setText] = React.useState("");
   const [sections, setSections] = React.useState<[string, string][]>([]);
   const [risks, setRisks] = React.useState<[string, number][]>([]);
+  const [summary, setSummary] = React.useState("");
   const [status, setStatus] = React.useState("");
   const [isConnected, setIsConnected] = React.useState(false);
 
@@ -50,12 +52,16 @@ export default function App() {
             transition={{ duration: 0.5 }}
           >
             <div className="results-grid">
-              <SummarySection text={text} risks={risks} />
+              <SummarySection text={text} risks={risks} onSummaryChange={setSummary} />
               <QASection docText={text} />
             </div>
             
             <div style={{ marginTop: '2rem' }}>
               <ClauseAnalysis sections={sections} />
+            </div>
+
+            <div style={{ marginTop: '2rem' }}>
+              <GoogleAI text={text} summary={summary} />
             </div>
           </motion.div>
         )}

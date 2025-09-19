@@ -5,6 +5,8 @@ from typing import Optional, Literal
 from .extract import extract_text, split_sections, highlight_risks
 from .prompts import SUMMARIZE_PROMPT, SIMPLIFY_PROMPT, QA_PROMPT
 from .ollama_client import generate
+from gemini_client import gemini_client
+
 
 app = FastAPI(title="Local Legal Assistant API")
 app.add_middleware(
@@ -49,3 +51,45 @@ async def analyze(body: AnalyzeBody):
         out = generate(prompt, model=body.model, options={"temperature":0.2, "num_predict":384})
         return {"result": out}
     return {"error":"unsupported mode"}
+@app.post("/enhance-summary")
+async def enhance_summary(body: AnalyzeBody):
+    """Enhance Ollama summary with Google Gemini insights"""
+    if not body.text:
+        return {"error": "text required"}
+    
+    enhanced = gemini_client.enhance_summary(body.text[:2000])
+    
+    if enhanced:
+        return {"enhanced_summary": enhanced, "powered_by": "Google Gemini AI"}
+    else:
+        return {"error": "Google AI Studio not available"}
+
+@app.post("/risk-analysis")
+async def risk_analysis(body: AnalyzeBody):
+    """Legal risk analysis using Google Gemini"""
+    result = gemini_client.risk_analysis(body.text)
+    
+    if result:
+        return {"risk_analysis": result, "powered_by": "Google Gemini AI"}
+    else:
+        return {"error": "Risk analysis unavailable"}
+
+@app.post("/translate-hindi")
+async def translate_hindi(body: AnalyzeBody):
+    """Translate to Hindi using Google Gemini (no billing required)"""
+    result = gemini_client.translate_hindi(body.text[:1000])
+    
+    if result:
+        return {"hindi_translation": result, "powered_by": "Google Gemini AI"}
+    else:
+        return {"error": "Translation unavailable"}
+
+@app.get("/google-ai-status")
+async def google_ai_status():
+    """Check Google AI Studio integration"""
+    return {
+        "google_ai_available": gemini_client.available,
+        "service": "Google AI Studio (Free Tier)",
+        "model": "Gemini 1.5 Flash",
+        "billing_required": False
+    }
