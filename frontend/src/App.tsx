@@ -1,78 +1,65 @@
 import React from "react";
-import Uploader from "./components/Uploader";
-import ClauseView from "./components/ClauseView";
-import { analyze, ping, API } from "./api";
-import QA from "./components/QA";
+import { motion } from "framer-motion";
+import Header from "./components/Header";
+import Hero from "./components/Hero";
+import UploadZone from "./components/UploadZone";
+import SummarySection from "./components/SummarySection";
+import QASection from "./components/QASection";
+import ClauseAnalysis from "./components/ClauseAnalysis";
+import { ping, API } from "./api";
 
-export default function App(){
-  const [text,setText] = React.useState("");
-  const [sections,setSections] = React.useState<[string,string][]>([]);
-  const [summary,setSummary] = React.useState("");
-  const [risks,setRisks] = React.useState<[string,number][]>([]);
-  const [status,setStatus] = React.useState<string>("");
-  const [busy,setBusy] = React.useState(false);
+export default function App() {
+  const [text, setText] = React.useState("");
+  const [sections, setSections] = React.useState<[string, string][]>([]);
+  const [risks, setRisks] = React.useState<[string, number][]>([]);
+  const [status, setStatus] = React.useState("");
+  const [isConnected, setIsConnected] = React.useState(false);
 
-  React.useEffect(()=>{
-    (async()=>{
-      try{
+  React.useEffect(() => {
+    (async () => {
+      try {
         await ping();
         setStatus(`Connected to API: ${API}`);
-      }catch(ex:any){
+        setIsConnected(true);
+      } catch (ex: any) {
         setStatus(ex?.message || "API unreachable");
+        setIsConnected(false);
       }
     })();
-  },[]);
+  }, []);
 
-  const onLoaded = (payload:any)=>{
+  const onLoaded = (payload: any) => {
     setText(payload.text || "");
     setSections(payload.sections || []);
     setRisks(payload.risks || []);
   };
 
-  const summarize = async ()=>{
-    setBusy(true);
-    try{
-      const {result} = await analyze("summarize", text);
-      setSummary(result || "");
-    } finally { setBusy(false); }
-  };
-
   return (
-    <div className="app-shell">
-      <div className="card" style={{marginBottom:16}}>
-        <h2 className="title">NyaySaathi: Local Legal Assistant</h2>
-        <p className="muted">{status}</p>
-        <p className="muted">Disclaimer: Not legal advice; verify with a professional.</p>
-        <Uploader onLoaded={onLoaded}/>
-      </div>
-      {text && (
-        <div className="card" style={{marginBottom:16}}>
-          <button className="btn btn-accent" onClick={summarize} disabled={busy}>Summarize</button>
-          <h3 className="title">Summary</h3>
-          <pre>{summary}</pre>
+    <div className="app">
+      <Header status={status} isConnected={isConnected} />
+      
+      <main className="main-content">
+        <Hero />
+        
+        <UploadZone onLoaded={onLoaded} />
 
-          <h3 className="title">Risk highlights</h3>
-          <ul className="list">
-            {risks.map(([kw,idx],i)=>(<li key={i}><span className="chip">{kw}</span> at {idx}</li>))}
-          </ul>
-
-          <details>
-            <summary>Full Text</summary>
-            <pre>{text}</pre>
-          </details>
-        </div>
-      )}
-      {text && (
-        <div className="row">
-          <div className="card">
-            <ClauseView sections={sections}/>
-          </div>
-          <div className="card">
-            <h3 className="title">Interactive Q&A</h3>
-            <QA docText={text}/>
-          </div>
-        </div>
-      )}
+        {text && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="results-grid">
+              <SummarySection text={text} risks={risks} />
+              <QASection docText={text} />
+            </div>
+            
+            <div style={{ marginTop: '2rem' }}>
+              <ClauseAnalysis sections={sections} />
+            </div>
+          </motion.div>
+        )}
+      </main>
     </div>
   );
 }
