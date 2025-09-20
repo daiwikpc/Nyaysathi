@@ -6,6 +6,11 @@ from .extract import extract_text, split_sections, highlight_risks
 from .prompts import SUMMARIZE_PROMPT, SIMPLIFY_PROMPT, QA_PROMPT
 from .ollama_client import generate
 from gemini_client import gemini_client
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 
 app = FastAPI(title="Local Legal Assistant API")

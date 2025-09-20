@@ -5,7 +5,7 @@ from typing import Optional
 class GeminiClient:
     def __init__(self):
         # Your Google AI Studio API key
-        self.api_key = "AIzaSyAFsS7rYGXBsoqu23RvFm9_nReOVX8YzWs"
+        self.api_key = os.getenv("GEMINI_API_KEY")
         genai.configure(api_key=self.api_key)
         self.model = genai.GenerativeModel('gemini-1.5-flash')  # Free model
         self.available = True
