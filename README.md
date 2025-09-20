@@ -9,7 +9,6 @@
 
 NyaySaathi is an intelligent web application that makes complex legal documents accessible to everyone. Using a hybrid AI approach with local processing (Ollama) and cloud enhancement (Google AI), it provides contract summarization, risk analysis, clause simplification, and multilingual translation.
 
-![NyaySaathi Demo](https://via.placeholder.com/800x400/1a2238/ffffff?text=NyaySaathi+Legal+Assistant+Demo)
 
 ---
 
