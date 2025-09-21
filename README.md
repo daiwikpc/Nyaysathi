@@ -9,6 +9,7 @@
 
 NyaySaathi is an intelligent web application that makes complex legal documents accessible to everyone. Using a hybrid AI approach with local processing (Ollama) and cloud enhancement (Google AI), it provides contract summarization, risk analysis, clause simplification, and multilingual translation.
 
+https://nyaysathi-tawny.vercel.app/
 ---
 
 ## ✨ Key Features
@@ -134,20 +135,37 @@ Open [http://localhost:5173](http://localhost:5173) to access NyaySaathi!
 ## 📁 Project Structure
 
 Nyaysathi/
+
 ├── backend/
+
 │ ├── app.py # FastAPI main application
+
 │ ├── gemini_client.py # Google AI integration
+
 │ ├── extract.py # Document processing
+
 │ ├── prompts.py # AI prompt templates
+
 │ └── requirements.txt # Python dependencies
+
 ├── frontend/
+
 │ ├── src/
+
 │ │ ├── components/ # React components
+
 │ │ ├── App.tsx # Main application
+
 │ │ └── api.ts # Backend communication
+
 │ ├── package.json # Node dependencies
+
 │ └── index.html # Entry point
+
 └── README.md
+
+
+
 
 text
 
